@@ -90,21 +90,28 @@ MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
 ```
 
-5. Start the backend server:
+5. Fetch Books and Author:
+   
+```bash
+cd ../backend/models
+node fetchbooks.js
+```
+
+6. Start the backend server:
 
 ```bash
 cd ../backend
 node server.js
 ```
 
-6. Start the frontend development server:
+7. Start the frontend development server:
 
 ```bash
 cd ../frontend
 npm start
 ```
 
-7. Fetch Books and Author:
+8. Fetch Books and Author:
    
 ```bash
 cd ../backend/models
