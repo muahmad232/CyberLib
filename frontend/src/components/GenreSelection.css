@@ -1,0 +1,136 @@
+/* Cyberpunk Genre Selection Styles */
+.genre-container {
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 2rem auto;
+  background-color: #0f0f0f;
+  color: #e0e0f0;
+  border-radius: 10px;
+  border: 1px solid #00ffcc;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.genre-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #00ffcc;
+  text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.genre-subtitle {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #a0aec0;
+}
+
+.genre-error {
+  color: #ff4d4d;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+}
+
+.genres-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 2rem;
+}
+
+.genre-option {
+  background-color: #1a1a1a;
+  color: #e0e0f0;
+  border: 1px solid #00ffcc;
+  border-radius: 20px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-family: 'Courier New', Courier, monospace;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
+}
+
+.genre-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+.genre-option.selected {
+  background-color: #00ffcc;
+  color: #121212;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.7);
+  transform: translateY(-2px);
+}
+
+.next-btn {
+  padding: 12px 30px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: not-allowed;
+  background-color: #333;
+  color: #666;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.next-btn.enabled {
+  background-color: #00ffcc;
+  color: #121212;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+.next-btn.enabled:hover {
+  background-color: #00e6c4;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .genre-container {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+  
+  .genre-title {
+    font-size: 1.5rem;
+  }
+  
+  .genre-option {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .genre-container {
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+  
+  .genres-grid {
+    gap: 10px;
+  }
+  
+  .genre-option {
+    padding: 8px 16px;
+    font-size: 0.7rem;
+  }
+  
+  .next-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
