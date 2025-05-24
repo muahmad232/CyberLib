@@ -104,7 +104,13 @@ cd ../frontend
 npm start
 ```
 
-7. Open `http://localhost:3000` in your browser.
+7. Fetch Books and Author:
+   
+```bash
+  cd ../backend/models
+  node fetchbooks.js
+```
+9. Open `http://localhost:3000` in your browser.
 
 ---
 
