@@ -94,7 +94,7 @@ JWT_SECRET=your_jwt_secret_key
 
 ```bash
 cd ../backend
-npm start
+node server.js
 ```
 
 6. Start the frontend development server:
