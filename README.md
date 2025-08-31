@@ -1,4 +1,6 @@
 # Cyber Lib - Personalized Book Discovery Platform
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/a16b203d-5ae3-47d0-811f-ada0cb9c1542" />
+
 
 ---
 
@@ -31,8 +33,14 @@
 
 * Personalized book recommendations based on user preferences
 * Advanced search by title, author, and genre
+  <img width="1919" height="1077" alt="image" src="https://github.com/user-attachments/assets/013dfb5b-3679-4d1e-85c2-ccf7093e0dfb" />
+
 * User registration, login, and profile management
+ <img width="1231" height="690" alt="image" src="https://github.com/user-attachments/assets/24ecd5c6-deb3-48b5-9c5a-befa20d5a12b" />
+
 * Interactive chatbot for book suggestions and assistance
+  <img width="1228" height="673" alt="chatbot" src="https://github.com/user-attachments/assets/8e5094e1-d3d7-4346-9132-dbc06d9f748b" />
+
 * Book and author rating & review system
 * Trending and popular books display
 * Responsive and visually appealing cyber-themed UI
