@@ -1,0 +1,462 @@
+/* Cyberpunk User Profile Styles */
+.user-profile {
+  background-color: #0f0f0f;
+  color: #e2e8f0;
+  font-family: 'Courier New', Courier, monospace;
+  border: 1px solid #00ffcc;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+  padding: 2rem;
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+.profile-title {
+  color: #00ffcc;
+  text-shadow: 0 0 8px rgba(0, 255, 204, 0.5);
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.profile-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: #00ffcc;
+  border-radius: 3px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.profile-picture-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-right: 1.5rem;
+}
+
+.profile-picture {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.profile-picture:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.7);
+  transform: scale(1.05);
+}
+
+.upload-label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #00ffcc;
+  color: #0f0f0f;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.upload-label:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+}
+
+.upload-input {
+  display: none;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  color: #00ffcc;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.profile-username {
+  color: #a0aec0;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.profile-email {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.upload-section {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.upload-btn {
+  background: #00ffcc;
+  color: #0f0f0f;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+.upload-btn:hover:not(:disabled) {
+  background: #00e6c4;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+}
+
+.upload-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.profile-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  color: #00ffcc;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.interests-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.interest-tag {
+  background: rgba(0, 255, 204, 0.1);
+  color: #00ffcc;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #00ffcc;
+  font-size: 0.85rem;
+}
+
+.no-interests {
+  color: #a0aec0;
+  font-style: italic;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.stat-card {
+  background: rgba(26, 26, 26, 0.7);
+  border: 1px solid rgba(0, 255, 204, 0.3);
+  border-radius: 5px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  color: #a0aec0;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  color: #00ffcc;
+  font-size: 1.75rem;
+  font-weight: bold;
+  display: block;
+}
+
+.loading-text {
+  color: #00ffcc;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.error-message {
+  color: #ff4d4d;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  text-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+  padding: 2rem;
+}
+
+.no-data {
+  color: #a0aec0;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2rem;
+  padding: 2rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .user-profile {
+    padding: 1.5rem;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .profile-picture-container {
+    margin-right: 0;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-profile {
+    padding: 1rem;
+  }
+  
+  .profile-title {
+    font-size: 1.5rem;
+  }
+  
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Genre Modal Styles - Cyberpunk Theme */
+.genre-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 15, 15, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.genre-modal-content {
+  background-color: #0f0f0f;
+  border: 2px solid #00ffcc;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 30px rgba(0, 255, 204, 0.5);
+  position: relative;
+}
+
+.genre-modal-content h3 {
+  color: #00ffcc;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+  border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.genre-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.genre-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  background: rgba(26, 26, 26, 0.7);
+  border: 1px solid rgba(0, 255, 204, 0.1);
+}
+
+.genre-item:hover {
+  background: rgba(0, 255, 204, 0.1);
+  border-color: #00ffcc;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+}
+
+.genre-item input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #00ffcc;
+  border-radius: 3px;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+
+.genre-item input[type="checkbox"]:checked {
+  background-color: #00ffcc;
+}
+
+.genre-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: #0f0f0f;
+  font-weight: bold;
+  font-size: 12px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.genre-item span {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  flex-grow: 1;
+}
+
+.genre-modal-content button {
+  background: #00ffcc;
+  color: #0f0f0f;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  margin-right: 1rem;
+}
+
+.genre-modal-content button:last-child {
+  background: transparent;
+  color: #ff4d4d;
+  border: 1px solid #ff4d4d;
+  box-shadow: 0 0 10px rgba(255, 77, 77, 0.2);
+}
+
+.genre-modal-content button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+}
+
+.genre-modal-content button:last-child:hover {
+  box-shadow: 0 0 20px rgba(255, 77, 77, 0.4);
+}
+
+.update-genres-btn {
+  background: transparent;
+  color: #00ffcc;
+  border: 1px solid #00ffcc;
+  padding: 0.5rem 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+}
+
+.update-genres-btn:hover {
+  background: rgba(0, 255, 204, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Scrollbar styling for modal */
+.genre-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.genre-modal-content::-webkit-scrollbar-track {
+  background: rgba(15, 15, 15, 0.8);
+}
+
+.genre-modal-content::-webkit-scrollbar-thumb {
+  background-color: #00ffcc;
+  border-radius: 10px;
+}
+
+/* Responsive adjustments for genre modal */
+@media (max-width: 768px) {
+  .genre-list {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .genre-modal-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .genre-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .genre-modal-content {
+    padding: 1rem;
+    width: 95%;
+  max-height: 90vh;
+  }
+  
+  .genre-modal-content button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    margin-right: 0;
+  }
+}

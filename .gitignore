@@ -1,0 +1,38 @@
+# ─── Environment files ────────────────────────────────────────────────────────
+# Never commit secrets or local config
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ─── Dependencies ─────────────────────────────────────────────────────────────
+node_modules/
+*/node_modules/
+
+# ─── Build output ─────────────────────────────────────────────────────────────
+/frontend/build
+/frontend/.pnp
+/frontend/.pnp.js
+
+# ─── Uploads (user-uploaded files — should be served from cloud storage in prod) ─
+/backend/uploads/*
+!/backend/uploads/.gitkeep
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# ─── OS / Editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ─── Testing ──────────────────────────────────────────────────────────────────
+/coverage
+BACKEND_OVERVIEW.md
+FRONTEND_OVERVIEW.md
+DATABASE_SCHEMA.md

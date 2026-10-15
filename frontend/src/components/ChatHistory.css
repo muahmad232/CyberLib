@@ -1,0 +1,167 @@
+/* ChatHistory.css Cyberpunk Chat History - Integrated Theme */
+.chat-history {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #0a0a0a;
+  border: 1px solid #00ff88;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+  animation: fadeIn 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Cyberpunk Grid Background */
+.chat-history::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: 
+    linear-gradient(
+      45deg,
+      transparent 48%,
+      #8a2be2 49%,
+      #8a2be2 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      #8a2be2 49%,
+      #8a2be2 51%,
+      transparent 52%
+    );
+  background-size: 30px 30px;
+  opacity: 0.1;
+  animation: glitch-grid 4s linear infinite;
+  z-index: 0;
+}
+
+/* Cyberpunk Scanline */
+.chat-history::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    #00ff88,
+    transparent
+  );
+  animation: scanline 6s linear infinite;
+  z-index: 0;
+}
+
+@keyframes glitch-grid {
+  0% { opacity: 0.05; }
+  50% { opacity: 0.40; }
+  100% { opacity: 0.05; }
+}
+
+@keyframes scanline {
+  to { top: 100%; }
+}
+
+.chat-history h2 {
+  margin-bottom: 0.5rem;
+  color: #00ffcc;
+  text-align: center;
+  font-size: 1.5rem;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+.chat-history ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.chat-history li {
+  cursor: pointer;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  background-color: #121212;
+  border-left: 3px solid #8a2be2;
+  transition: all 0.3s ease;
+  color: #e0d0ff;
+  border-radius: 0 8px 8px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-history li:hover {
+  background-color: #1a0a2e;
+  transform: translateX(5px);
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+}
+
+.chat-history li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background: linear-gradient(to bottom, #00ff88, #8a2be2);
+}
+
+.chat-history li p {
+  margin: 0;
+  font-size: 0.95rem;
+  padding-left: 12px;
+  line-height: 1.5;
+}
+
+.chat-history .snippet {
+  font-size: 0.85rem;
+  color: #a0ffd0;
+  font-style: italic;
+  margin-top: 0.25rem;
+  padding-left: 12px;
+  opacity: 0.8;
+}
+
+.chat-history li strong {
+  color: #00ff88;
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.7);
+}
+
+/* Active/Selected Chat Item */
+.chat-history li.active {
+  background: linear-gradient(90deg, #1a0a2e 0%, #0a1a14 100%);
+  border-left: 3px solid #00ff88;
+}
+
+/* Scrollbar for chat history */
+.chat-history::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-history::-webkit-scrollbar-thumb {
+  background-color: #00ff88;
+  border-radius: 3px;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .chat-history {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+  }
+  
+  .chat-history li {
+    padding: 0.6rem;
+  }
+}
