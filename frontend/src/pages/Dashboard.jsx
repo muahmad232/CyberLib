@@ -11,7 +11,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [books, setBooks] = useState([]);
-  const [visibleBooks, setVisibleBooks] = useState(5);
+  const visibleBooks = 5;
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);

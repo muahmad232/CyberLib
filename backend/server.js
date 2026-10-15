@@ -60,12 +60,17 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim().replace(/\/$/, ''))
   : ['http://localhost:3000'];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true);
+    const cleanOrigin = origin.replace(/\/$/, '');
+    if (
+      allowedOrigins.includes(cleanOrigin) ||
+      cleanOrigin.endsWith('.vercel.app')
+    ) {
       return callback(null, true);
     }
     return callback(new Error(`Not allowed by CORS: ${origin}`));
@@ -73,6 +78,15 @@ app.use(cors({
   credentials: true
 }));
 app.use(bodyParser.json());
+
+// Health check and root endpoints for Render & uptime monitoring
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', uptime: process.uptime(), timestamp: Date.now() });
+});
+
+app.get('/', (req, res) => {
+  res.status(200).send('CyberLib API is operational.');
+});
 
 // Serve static files from the 'uploads' folder
 app.use('/uploads', express.static(uploadsDir));

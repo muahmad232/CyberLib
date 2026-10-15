@@ -9,7 +9,7 @@ const SearchPage = () => {
   const [searchResults, setSearchResults] = useState({ books: [], authors: [] });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -29,6 +29,7 @@ const SearchPage = () => {
     } else {
       setSearchResults({ books: [], authors: [] }); // clear on empty
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, navigate]);
 
   const fetchResults = async (query) => {
