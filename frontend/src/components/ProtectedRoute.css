@@ -1,0 +1,97 @@
+/* ProtectedRoute.css - Cyberpunk Login First Screen */
+.login-required-overlay {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #050505;
+  padding: 2rem;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.login-required-card {
+  background: #0f0f15;
+  border: 2px solid #ff007f;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(255, 0, 127, 0.4), inset 0 0 15px rgba(255, 0, 127, 0.1);
+  padding: 2.5rem;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  animation: glowPulse 3s infinite alternate;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 20px rgba(255, 0, 127, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 35px rgba(255, 0, 127, 0.6);
+  }
+}
+
+.login-required-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.login-required-title {
+  color: #ff007f;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(255, 0, 127, 0.8);
+  margin-bottom: 1rem;
+}
+
+.login-required-text {
+  color: #a0ffd0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.login-required-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.login-required-btn {
+  padding: 0.75rem 1.75rem;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-required-btn.primary {
+  background-color: #ff007f;
+  color: #ffffff;
+  border: 1px solid #ff007f;
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+}
+
+.login-required-btn.primary:hover {
+  background-color: transparent;
+  color: #ff007f;
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.9);
+}
+
+.login-required-btn.secondary {
+  background-color: transparent;
+  color: #00ffcc;
+  border: 1px solid #00ffcc;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+}
+
+.login-required-btn.secondary:hover {
+  background-color: #00ffcc;
+  color: #050505;
+  box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
+}

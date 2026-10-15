@@ -20,7 +20,7 @@ const SearchPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/login');
+      navigate('/auth');
       return;
     }
 
@@ -45,7 +45,7 @@ const SearchPage = () => {
     } catch (err) {
       if (err.response?.status === 401) {
         localStorage.removeItem('token');
-        navigate('/login');
+        navigate('/auth');
         setError('Session expired. Please login again.');
       } else {
         setError(err.response?.data?.error || err.message || 'Search failed');
@@ -83,7 +83,7 @@ const SearchPage = () => {
           <p className="text-lg">{error}</p>
           {error.includes('Session expired') && (
             <button 
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/auth')}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               Go to Login

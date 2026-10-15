@@ -4,22 +4,26 @@ const { popularAuthorsCache } = require('./popularauthorsController');
 // Function to get the details of an author
 // authorController.js
 
+// Function to get the details of an author with populated review usernames
 exports.getAuthorDetails = async (req, res) => {
-    try {
-      const author = await Author.findById(req.params.id);
-      if (!author) {
-        return res.status(404).json({ message: 'Author not found' });
-      }
-  
-      res.json(author);
-    } catch (err) {
-      console.error('Error fetching author details:', err);
-      res.status(500).json({ message: 'Error fetching author details', error: err.message });
+  try {
+    const author = await Author.findById(req.params.id)
+      .populate({
+        path: 'reviews.userId',
+        select: 'username name'
+      });
+    if (!author) {
+      return res.status(404).json({ message: 'Author not found' });
     }
-  };
-  
 
-// Function to rate an author (calculate average rating)
+    res.json(author);
+  } catch (err) {
+    console.error('Error fetching author details:', err);
+    res.status(500).json({ message: 'Error fetching author details', error: err.message });
+  }
+};
+
+// Function to rate an author (1 rating per user - overrides previous rating)
 exports.rateAuthor = async (req, res) => {
   try {
     const authorId = req.params.id;
@@ -32,13 +36,38 @@ exports.rateAuthor = async (req, res) => {
     if (!author) {
       return res.status(404).json({ error: 'Author not found' });
     }
-    const totalRating = (author.rating * author.reviewCount) + rating;
-    const newReviewCount = author.reviewCount + 1;
-    const newAverageRating = totalRating / newReviewCount;
-    author.rating = newAverageRating;
-    author.reviewCount = newReviewCount;
+
+    const userIdStr = req.user._id.toString();
+    const existingIndex = author.reviews.findIndex(
+      r => r.userId && r.userId.toString() === userIdStr
+    );
+
+    if (existingIndex !== -1) {
+      // Override previous rating
+      author.reviews[existingIndex].rating = rating;
+      author.reviews[existingIndex].createdAt = Date.now();
+    } else {
+      // Add new review entry with this rating
+      author.reviews.push({
+        rating,
+        reviewText: '',
+        userId: req.user._id,
+        createdAt: Date.now()
+      });
+    }
+
+    // Recalculate average rating & review count accurately from reviews array
+    const ratedReviews = author.reviews.filter(r => r.rating && r.rating > 0);
+    author.reviewCount = author.reviews.length;
+    if (ratedReviews.length > 0) {
+      const total = ratedReviews.reduce((sum, r) => sum + r.rating, 0);
+      author.rating = parseFloat((total / ratedReviews.length).toFixed(1));
+    } else {
+      author.rating = rating;
+    }
 
     await author.save();
+    if (popularAuthorsCache) popularAuthorsCache.del('popular_authors');
 
     res.json({ success: true, author });
   } catch (error) {
@@ -47,34 +76,54 @@ exports.rateAuthor = async (req, res) => {
   }
 };
 
-// Function to write a review for an author
-
-// Function to write a review for an author
+// Function to write/update a review for an author (1 review per user - overrides previous)
 exports.writeReview = async (req, res) => {
   try {
     const { id } = req.params;
     const { rating, reviewText } = req.body;
 
-    // Find the author by ID
     const author = await Author.findById(id);
     if (!author) {
       return res.status(404).json({ message: 'Author not found' });
     }
 
-    // Create a new review
-    const newReview = {
-      rating,
-      reviewText,
-      // Optionally include user information if needed
-      // userId: req.user.id  // Assuming you have user authentication set up
-    };
+    const userIdStr = req.user._id.toString();
+    const existingIndex = author.reviews.findIndex(
+      r => r.userId && r.userId.toString() === userIdStr
+    );
 
-    // Add the review to the author's reviews array
-    author.reviews.push(newReview);
+    if (existingIndex !== -1) {
+      // Override existing review text and rating (if provided)
+      author.reviews[existingIndex].reviewText = reviewText;
+      if (rating && rating >= 1 && rating <= 5) {
+        author.reviews[existingIndex].rating = rating;
+      }
+      author.reviews[existingIndex].createdAt = Date.now();
+    } else {
+      // Add new review
+      author.reviews.push({
+        rating: (rating && rating >= 1 && rating <= 5) ? rating : undefined,
+        reviewText,
+        userId: req.user._id,
+        createdAt: Date.now()
+      });
+    }
+
+    // Recalculate author rating & review count
+    const ratedReviews = author.reviews.filter(r => r.rating && r.rating > 0);
+    author.reviewCount = author.reviews.length;
+    if (ratedReviews.length > 0) {
+      const total = ratedReviews.reduce((sum, r) => sum + r.rating, 0);
+      author.rating = parseFloat((total / ratedReviews.length).toFixed(1));
+    }
+
     await author.save();
     if (popularAuthorsCache) popularAuthorsCache.del('popular_authors');
 
-    res.status(200).json({ message: 'Review submitted successfully', author });
+    res.status(200).json({ 
+      message: existingIndex !== -1 ? 'Review updated successfully' : 'Review submitted successfully', 
+      author 
+    });
   } catch (err) {
     console.error('Error writing review:', err);
     res.status(500).json({ message: 'Error writing review', error: err.message });

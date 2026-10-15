@@ -30,6 +30,9 @@ const Navbar = () => {
     textShadow: 'none'
   };
 
+  const token = localStorage.getItem('token');
+  const isLoggedIn = Boolean(token && token !== 'undefined' && token !== 'null' && token.trim() !== '');
+
   return (
     <nav style={{
       backgroundColor: '#0a0a0a',
@@ -61,7 +64,7 @@ const Navbar = () => {
 
         <div style={{ display: 'flex' }}>
           {[
-            { path: '/auth', name: localStorage.getItem('token') ? 'LOGOUT' : 'LOGIN' },
+            { path: '/auth', name: isLoggedIn ? 'LOGOUT' : 'LOGIN' },
             { path: '/search', name: 'SEARCH' },
             { path: '/profile', name: 'PROFILE' },
             { path: '/user/books', name: 'YOUR BOOKS' },

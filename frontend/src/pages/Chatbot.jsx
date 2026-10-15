@@ -121,6 +121,9 @@ const Chatbot = () => {
   };
   
   const sendMessage = async (message) => {
+    const token = localStorage.getItem('token');
+    const isLoggedIn = Boolean(token && token !== 'undefined' && token !== 'null' && token.trim() !== '');
+
     const userMessage = { 
       sender: 'user', 
       text: message,
@@ -129,6 +132,17 @@ const Chatbot = () => {
   
     setMessages(prev => [...prev, userMessage]);
     setUserInput('');
+
+    if (!isLoggedIn) {
+      const loginPromptMsg = {
+        sender: 'bot',
+        text: '🔒 LOGIN FIRST\n\nYou must be logged in to chat with the Keeper of Tales and receive literary recommendations.',
+        specialFormat: true,
+        isLoginPrompt: true
+      };
+      setMessages(prev => [...prev, loginPromptMsg]);
+      return;
+    }
   
     await saveMessageToBackend('user', message);
   
@@ -328,6 +342,28 @@ return (
               <strong>{message.sender === 'bot' ? 'KEEPER OF TALES:' : 'YOU:'}</strong>
               <span style={{ whiteSpace: 'pre-line' }}>{message.text}</span>
             </p>
+            {message.isLoginPrompt && (
+              <div style={{ marginTop: '0.75rem', paddingLeft: '8px' }}>
+                <a 
+                  href="/auth" 
+                  style={{
+                    display: 'inline-block',
+                    padding: '0.45rem 1.25rem',
+                    backgroundColor: '#ff007f',
+                    color: '#ffffff',
+                    border: '1px solid #ff007f',
+                    borderRadius: '4px',
+                    fontFamily: "'Courier New', monospace",
+                    fontWeight: 'bold',
+                    textDecoration: 'none',
+                    letterSpacing: '1px',
+                    boxShadow: '0 0 15px rgba(255, 0, 127, 0.5)'
+                  }}
+                >
+                  LOGIN FIRST
+                </a>
+              </div>
+            )}
           </div>
         ))}
       </div>

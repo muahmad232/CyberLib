@@ -131,13 +131,15 @@ const AuthorDetails = () => {
         </>
       )}
 
-      {author.reviews?.length > 0 && (
+      {author.reviews?.filter(r => r.reviewText && r.reviewText.trim() !== '').length > 0 && (
         <div className="reviews-section">
           <h3>USER REVIEWS</h3>
-          {author.reviews.map((review, index) => (
+          {author.reviews
+            .filter(r => r.reviewText && r.reviewText.trim() !== '')
+            .map((review, index) => (
             <div key={index} className="review">
-              <p><strong>User {index + 1}</strong></p>
-              <p>Rating: {review.rating}/5</p>
+              <p><strong>{review.userId?.username || review.userId?.name || `User ${index + 1}`}</strong></p>
+              {review.rating > 0 && <p>Rating: {review.rating}/5</p>}
               <p>{review.reviewText}</p>
             </div>
           ))}
