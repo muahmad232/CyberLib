@@ -1,4 +1,5 @@
-const Author = require('../models/author'); // Assuming your model is in 'models/Author.js'
+const Author = require('../models/author');
+const { popularAuthorsCache } = require('./popularauthorsController');
 
 // Function to get the details of an author
 // authorController.js
@@ -71,6 +72,7 @@ exports.writeReview = async (req, res) => {
     // Add the review to the author's reviews array
     author.reviews.push(newReview);
     await author.save();
+    if (popularAuthorsCache) popularAuthorsCache.del('popular_authors');
 
     res.status(200).json({ message: 'Review submitted successfully', author });
   } catch (err) {

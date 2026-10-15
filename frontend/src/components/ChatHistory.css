@@ -80,6 +80,24 @@
   z-index: 1;
 }
 
+.chat-history-group {
+  margin-bottom: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.chat-group-heading {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #ff007f;
+  margin: 0.75rem 0 0.4rem 0.25rem;
+  text-shadow: 0 0 6px rgba(255, 0, 127, 0.4);
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 0, 127, 0.2);
+  padding-bottom: 0.2rem;
+}
+
 .chat-history ul {
   list-style: none;
   padding: 0;

@@ -101,6 +101,16 @@ const UserProfile = () => {
     }
   };
 
+  const getProfileImageSrc = () => {
+    if (previewUrl) return previewUrl;
+    let img = user?.image;
+    if (Array.isArray(img)) img = img[0];
+    if (!img || typeof img !== 'string') return 'https://via.placeholder.com/128';
+    if (img.startsWith('http') || img.startsWith('data:')) return img;
+    const backendBase = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+    return `${backendBase}${img}`;
+  };
+
   if (loading) return <div className="loading-text">LOADING USER PROFILE...</div>;
   if (error) return <div className="error-message">{error}</div>;
   if (!user) return <div className="no-data">NO USER DATA FOUND</div>;
@@ -112,7 +122,7 @@ const UserProfile = () => {
       <div className="profile-header">
         <div className="profile-picture-container">
           <img
-            src={previewUrl || user.image || 'https://via.placeholder.com/128'}
+            src={getProfileImageSrc()}
             alt="Profile"
             className="profile-picture"
           />

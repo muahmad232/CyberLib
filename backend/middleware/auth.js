@@ -10,7 +10,12 @@ const protect = async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     // Extract token
-    token = req.headers.authorization.split(' ')[1];
+    const parts = req.headers.authorization.split(' ');
+    token = parts[1];
+
+    if (!token || token === 'undefined' || token === 'null' || token.trim() === '') {
+      return res.status(401).json({ message: 'Not authorized, no token provided' });
+    }
 
     // 1. Verify token
     let decoded;

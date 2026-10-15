@@ -1,8 +1,8 @@
 const User = require('../models/user');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Check if Cloudinary credentials are provided in environment
 const hasCloudinary = Boolean(
@@ -19,24 +19,22 @@ if (hasCloudinary) {
   });
 }
 
-// Use Cloudinary if configured; otherwise fallback to local disk storage
-const storage = hasCloudinary
-  ? new CloudinaryStorage({
-      cloudinary: cloudinary,
-      params: {
-        folder: 'cyberlib_profiles',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
-        transformation: [{ width: 500, height: 500, crop: 'limit' }],
-      },
-    })
-  : multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, 'uploads/');  // Specify the folder to save the images
-      },
-      filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));  // Create a unique file name
-      }
-    });
+// Ensure the local uploads folder exists
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+// Multer stores to local disk first to guarantee uploads never fail due to cloud/network errors
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname).toLowerCase());
+  }
+});
 
 const upload = multer({
   storage: storage,
@@ -69,9 +67,9 @@ exports.getUserProfile = async (req, res) => {
       username: user.username,
       email: user.email,
       interests: user.interests,
-      readCount: user.readBooks.length,
-      wantToReadCount: user.wishlist.length,
-      image: user.image
+      readCount: user.readBooks ? user.readBooks.length : 0,
+      wantToReadCount: user.wishlist ? user.wishlist.length : 0,
+      image: Array.isArray(user.image) ? (user.image[0] || '') : (user.image || '')
     });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching profile', error: err.message });
@@ -79,35 +77,54 @@ exports.getUserProfile = async (req, res) => {
 };
 
 // @desc    Update user profile image
-// @route   POST /api/user/profile/image
+// @route   POST /api/profile/upload
 // @access  Private
 exports.updateUserProfileImage = async (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
-      return res.status(400).json({ message: err.message });
+      console.error('Upload multer error:', err.message);
+      return res.status(400).json({ message: err.message, error: err.message });
     }
 
     if (!req.file) {
-      return res.status(400).json({ message: 'No image file uploaded' });
+      return res.status(400).json({ message: 'No image file uploaded', error: 'No image file uploaded' });
     }
 
     try {
       const user = await User.findById(req.user._id);
-      if (!user) return res.status(404).json({ message: 'User not found' });
+      if (!user) return res.status(404).json({ message: 'User not found', error: 'User not found' });
 
-      // Save Cloudinary HTTPS URL or local uploads path
-      user.image = (req.file.path && req.file.path.startsWith('http'))
-        ? req.file.path
-        : `/uploads/${req.file.filename}`;
+      let imageUrl = `/uploads/${req.file.filename}`;
 
+      // If Cloudinary credentials are provided, attempt cloud upload
+      if (hasCloudinary) {
+        try {
+          const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'cyberlib_profiles',
+            transformation: [{ width: 500, height: 500, crop: 'limit' }],
+          });
+          imageUrl = result.secure_url;
+
+          // Remove temporary local file after successful Cloudinary upload
+          fs.unlink(req.file.path, (unlinkErr) => {
+            if (unlinkErr) console.warn('Could not remove temp upload file:', unlinkErr.message);
+          });
+        } catch (cloudErr) {
+          console.warn('⚠️ Cloudinary upload failed (falling back to local disk storage):', cloudErr.message || cloudErr);
+          // Keep local path so the upload still succeeds!
+        }
+      }
+
+      user.image = imageUrl;
       await user.save();
 
       res.status(200).json({
         message: 'Profile image updated successfully',
         image: user.image
       });
-    } catch (err) {
-      res.status(500).json({ message: 'Error updating profile image', error: err.message });
+    } catch (dbErr) {
+      console.error('Error saving profile image:', dbErr);
+      res.status(500).json({ message: 'Error updating profile image', error: dbErr.message });
     }
   });
 };

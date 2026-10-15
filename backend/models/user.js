@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   
   password: String,
   interests: [String], 
-  image:[String],
+  image: { type: mongoose.Schema.Types.Mixed, default: '' },
   readBooks: [{
     bookId: { type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true },
     dateRead: { type: Date, default: Date.now },

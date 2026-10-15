@@ -12,30 +12,57 @@ exports.unifiedSearch = async (req, res) => {
     });
   }
 
-  try {
-    // Case-insensitive search for authors
-    const authors = await Author.find({
-      $or: [
-        { name: { $regex: query.trim(), $options: 'i' } },
-        { top_work: { $regex: query.trim(), $options: 'i' } }
-      ]
-    })
-    .select('name top_work image');  // Ensure image is included in the selection
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 30));
+  const skip = (page - 1) * limit;
 
-    // Case-insensitive search for books, returning coverImage explicitly
-    const books = await Book.find({
-      $or: [
-        { title: { $regex: query.trim(), $options: 'i' } },
-        { authors: { $regex: query.trim(), $options: 'i' } },
-        { "authors.name": { $regex: query.trim(), $options: 'i' } }
-      ]
-    }).select('title authors genre coverImage previewLink');
+  try {
+    const searchRegex = new RegExp(query.trim(), 'i');
+
+    const [authors, books, totalBooks] = await Promise.all([
+      // Top 5 matching authors
+      Author.find({
+        $or: [
+          { name: { $regex: searchRegex } },
+          { top_work: { $regex: searchRegex } }
+        ]
+      })
+      .select('name top_work image rating')
+      .limit(10),
+
+      // Paginated books
+      Book.find({
+        $or: [
+          { title: { $regex: searchRegex } },
+          { authors: { $regex: searchRegex } },
+          { "authors.name": { $regex: searchRegex } }
+        ]
+      })
+      .select('title authors genre coverImage previewLink rating')
+      .skip(skip)
+      .limit(limit),
+
+      // Total count for pagination metadata
+      Book.countDocuments({
+        $or: [
+          { title: { $regex: searchRegex } },
+          { authors: { $regex: searchRegex } },
+          { "authors.name": { $regex: searchRegex } }
+        ]
+      })
+    ]);
 
     res.json({
       success: true,
       results: {
         authors,
-        books
+        books,
+        pagination: {
+          page,
+          limit,
+          totalBooks,
+          totalPages: Math.ceil(totalBooks / limit)
+        }
       }
     });
 
@@ -86,7 +113,7 @@ exports.recommendBooks = async (req, res) => {
         }
       },
       {
-        $sample: { size: 1000 }
+        $sample: { size: 25 }
       }
     ]);
 

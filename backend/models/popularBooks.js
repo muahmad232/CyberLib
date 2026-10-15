@@ -8,4 +8,7 @@ const popularBookSchema = new mongoose.Schema({
   lastUpdated: { type: Date, default: Date.now }
 });
 
+popularBookSchema.index({ bookId: 1 }, { unique: true });
+popularBookSchema.index({ readCount: -1, wishCount: -1 });
+
 module.exports = mongoose.model('PopularBook', popularBookSchema);

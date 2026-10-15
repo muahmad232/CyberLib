@@ -1,10 +1,19 @@
-const Author = require('../models/author'); // Adjust path as needed
+const Author = require('../models/author');
+const NodeCache = require('node-cache');
+
+// Cache popular authors response for 5 minutes (300 seconds)
+const popularAuthorsCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
 
 // @desc    Get top 5 popular authors (highest rated)
 // @route   GET /api/authors/popular
 // @access  Public
 const getPopularAuthors = async (req, res) => {
   try {
+    const cached = popularAuthorsCache.get('popular_authors');
+    if (cached) {
+      return res.status(200).json(cached);
+    }
+
     // Get top 5 popular authors - sorted by rating descending
     const popularAuthors = await Author.aggregate([
       {
@@ -40,11 +49,14 @@ const getPopularAuthors = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    const responsePayload = {
       success: true,
       count: popularAuthors.length,
       data: popularAuthors
-    });
+    };
+
+    popularAuthorsCache.set('popular_authors', responsePayload);
+    res.status(200).json(responsePayload);
 
   } catch (err) {
     console.error('Error fetching popular authors:', err);
@@ -57,5 +69,6 @@ const getPopularAuthors = async (req, res) => {
 };
 
 module.exports = {
-  getPopularAuthors
+  getPopularAuthors,
+  popularAuthorsCache
 };

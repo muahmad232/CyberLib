@@ -45,6 +45,7 @@ const authorSchema = new mongoose.Schema({
 });
 
 authorSchema.index({ name: 'text', top_work: 'text' });
+authorSchema.index({ rating: -1, reviewCount: -1 });
 
 // Create the Author model using the schema
 const Author = mongoose.model('Author', authorSchema);
