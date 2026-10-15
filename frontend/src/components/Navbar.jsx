@@ -50,6 +50,9 @@ const Navbar = () => {
         <Link 
           to="/dashboard" 
           style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
             color: '#00ffcc',
             fontFamily: "'Courier New', Courier, monospace",
             fontSize: '1.5rem',
@@ -59,6 +62,16 @@ const Navbar = () => {
             textDecoration: 'none'
           }}
         >
+          <img 
+            src="/favicon-32x32.png" 
+            alt="CyberLib Icon" 
+            style={{
+              width: '26px',
+              height: '26px',
+              borderRadius: '4px',
+              boxShadow: '0 0 8px rgba(0, 255, 204, 0.6)'
+            }}
+          />
           CYBER_LIB
         </Link>
 

@@ -50,8 +50,12 @@ const LandingPage = () => {
       </div>
 
       {/* Chatbot Toggle Button */}
-      <div className="chatbot-toggle" onClick={toggleChatbot}>
-        <span className="chatbot-toggle-icon">💬</span>
+      <div className="chatbot-toggle" onClick={toggleChatbot} title="Keeper of Tales AI Companion">
+        <img 
+          src="/apple-touch-icon.png" 
+          alt="Keeper of Tales" 
+          style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover' }} 
+        />
       </div>
 
       {/* Chatbot Popup */}

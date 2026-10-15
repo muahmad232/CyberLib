@@ -29,6 +29,6 @@ bookSchema.index({ authors: 1 });
 bookSchema.index({ rating: -1 });
 
 
-const Book = mongoose.model('Book', bookSchema);
+const Book = mongoose.models.Book || mongoose.model('Book', bookSchema);
 
 module.exports = Book;

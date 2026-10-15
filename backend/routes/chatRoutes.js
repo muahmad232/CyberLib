@@ -3,7 +3,10 @@ const router = express.Router();
 const chatController = require('../controllers/chatController');
 const { protect } = require('../middleware/auth');
 
-// Save message or start new session
+// Send message to Groq AI companion with MongoDB RAG
+router.post('/message', protect, chatController.sendMessageWithAI);
+
+// Save raw message or start new session (legacy / direct)
 router.post('/', protect, chatController.saveMessage);
 
 // Fetch all user chat sessions
