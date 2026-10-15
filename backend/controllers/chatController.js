@@ -6,54 +6,40 @@ exports.saveMessage = async (req, res) => {
   const userId = req.user._id;
 
   try {
-    console.log('Request received to save message');
-    console.log('Sender:', sender);
-    console.log('Text:', text);
-    console.log('ChatId:', chatId);
-    console.log('UserId:', userId);
-
     let chat;
 
     if (chatId) {
-      // If chatId exists, try to find the existing chat session
-      console.log(`ChatId found: ${chatId}, attempting to update the existing chat session...`);
       chat = await Chat.findById(chatId);
 
       if (chat) {
-        console.log('Chat found, appending message...');
         // Add to existing chat session
         chat = await Chat.findByIdAndUpdate(
           chatId,
           {
-            $push: { messages: { sender, text } } // Append to messages array
+            $push: { messages: { sender, text } }
           },
           { new: true }
         );
-        console.log('Message appended successfully!');
       } else {
-        console.log('Chat not found, creating a new chat...');
-        // If the chatId doesn't exist in the database (unexpected), create a new chat session
+        // If chatId doesn't exist in DB, start new session
         chat = new Chat({
           userId,
-          messages: [{ sender, text }] // Add the first message to the new chat
+          messages: [{ sender, text }]
         });
         await chat.save();
-        console.log('New chat session created!');
       }
     } else {
-      // If no chatId, start a new chat session
-      console.log('No ChatId provided, creating a new chat session...');
+      // Start a new chat session
       chat = new Chat({
         userId,
-        messages: [{ sender, text }] // Add the first message to the new chat
+        messages: [{ sender, text }]
       });
       await chat.save();
-      console.log('New chat session created!');
     }
 
-    res.status(200).json(chat); // Return the updated chat object
+    res.status(200).json(chat);
   } catch (err) {
-    console.error('Error saving message:', err);
+    console.error('Error saving message:', err.message);
     res.status(500).json({ message: 'Failed to save message', error: err.message });
   }
 };
@@ -72,18 +58,18 @@ exports.getUserChats = async (req, res) => {
   }
 };
 
-// Optional: Fetch a single chat session
-// exports.getChatById = async (req, res) => {
-//   try {
-//     const chat = await Chat.findOne({
-//       _id: req.params.id,
-//       userId: req.user._id
-//     });
+// Fetch a single chat session
+exports.getChatById = async (req, res) => {
+  try {
+    const chat = await Chat.findOne({
+      _id: req.params.id,
+      userId: req.user._id
+    });
 
-//     if (!chat) return res.status(404).json({ message: 'Chat not found' });
+    if (!chat) return res.status(404).json({ message: 'Chat not found' });
 
-//     res.status(200).json(chat);
-//   } catch (err) {
-//     res.status(500).json({ message: 'Failed to retrieve chat', error: err.message });
-//   }
-// };
+    res.status(200).json(chat);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to retrieve chat', error: err.message });
+  }
+};

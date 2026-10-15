@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import { Link } from 'react-router-dom';
 import "./UserBooks.css";
 
@@ -12,8 +12,6 @@ const UserBooks = () => {
   
   const readListRef = useRef(null);
   const wishlistRef = useRef(null);
-  
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const updateVisibleCount = () => {
@@ -32,12 +30,8 @@ const UserBooks = () => {
   useEffect(() => {
     const fetchUserBooks = async () => {
       try {
-        const resRead = await axios.get('http://localhost:5000/api/user/books/read', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const resWishlist = await axios.get('http://localhost:5000/api/user/books/wishlist', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const resRead = await apiClient.get('/api/user/books/read');
+        const resWishlist = await apiClient.get('/api/user/books/wishlist');
 
         setReadBooks(resRead.data);
         setWishlistBooks(resWishlist.data);
@@ -49,7 +43,7 @@ const UserBooks = () => {
     };
 
     fetchUserBooks();
-  }, [token]);
+  }, []);
 
   const scroll = (ref, direction) => {
     const container = ref.current;

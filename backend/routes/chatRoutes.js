@@ -10,6 +10,6 @@ router.post('/', protect, chatController.saveMessage);
 router.get('/', protect, chatController.getUserChats);
 
 // Fetch specific session
-// router.get('/:id', protect, chatController.getChatById);
+router.get('/:id', protect, chatController.getChatById);
 
 module.exports = router;

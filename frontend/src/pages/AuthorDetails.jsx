@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import { useParams } from 'react-router-dom';
 import './BookDetails.css';
 
@@ -18,7 +18,7 @@ const AuthorDetails = () => {
   useEffect(() => {
     const fetchAuthorDetails = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/authors/author/${id}`);
+        const res = await apiClient.get(`/api/authors/author/${id}`);
         setAuthor(res.data);
       } catch (err) {
         setError(err.response?.data?.error || 'Error fetching author details');
@@ -37,19 +37,17 @@ const AuthorDetails = () => {
     try {
       // Submit rating if provided
       if (rating > 0) {
-        await axios.post(
-          `http://localhost:5000/api/authors/author/${id}/rate`,
-          { rating },
-          { headers: { Authorization: `Bearer ${token}` } }
+        await apiClient.post(
+          `/api/authors/author/${id}/rate`,
+          { rating }
         );
       }
 
       // Submit review text if provided
       if (reviewText.trim()) {
-        await axios.post(
-          `http://localhost:5000/api/authors/author/${id}/review`,
-          { reviewText, rating: rating || 0 },
-          { headers: { Authorization: `Bearer ${token}` } }
+        await apiClient.post(
+          `/api/authors/author/${id}/review`,
+          { reviewText, rating: rating || 0 }
         );
       }
 
@@ -58,7 +56,7 @@ const AuthorDetails = () => {
       setReviewText("");
 
       // Refresh author data
-      const res = await axios.get(`http://localhost:5000/api/authors/author/${id}`);
+      const res = await apiClient.get(`/api/authors/author/${id}`);
       setAuthor(res.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Error submitting review');

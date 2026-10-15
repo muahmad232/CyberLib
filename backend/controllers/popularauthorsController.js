@@ -9,7 +9,8 @@ const getPopularAuthors = async (req, res) => {
     const popularAuthors = await Author.aggregate([
       {
         $match: {
-          rating: { $exists: true, $gte: 1 } // Only authors with ratings
+          rating: { $exists: true, $gte: 1 }, // Only authors with ratings
+          name: { $exists: true, $nin: [null, ""] } // Exclude empty or missing author names
         }
       },
       {

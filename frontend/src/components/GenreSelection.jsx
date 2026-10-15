@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './GenreSelection.css';
 
@@ -57,7 +57,7 @@ function GenreSelection() {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/user/update-interests', {
+      await apiClient.post('/api/user/update-interests', {
         userId,
         interests: selectedGenres
       });

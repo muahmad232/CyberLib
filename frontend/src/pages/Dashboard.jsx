@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import SearchBar from '../components/SearchBar';
 import Recommendations from '../components/Recommendations';
 import PopularBooks from '../components/PopularBooks';
@@ -26,10 +26,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/books/recommendations', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await apiClient.get('/api/books/recommendations');
         
         if (res.data.length === 0) {
           setAllBooksVisited(true);

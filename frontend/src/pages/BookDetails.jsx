@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import { useParams } from 'react-router-dom';
 import './BookDetails.css';
 
@@ -14,15 +14,11 @@ const BookDetails = () => {
   const [reviewText, setReviewText] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState(false);
 
-  const token = localStorage.getItem('token');
-
   // Fetch book details
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/books/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await apiClient.get(`/api/books/${id}`);
         setBook(res.data);
       } catch (err) {
         if (err.response && err.response.status >= 500) {
@@ -34,15 +30,13 @@ const BookDetails = () => {
     };
 
     fetchBookDetails();
-  }, [id, token]);
+  }, [id]);
 
   // Check book status
   useEffect(() => {
     const checkBookStatus = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user/books/status/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await apiClient.get(`/api/user/books/status/${id}`);
         setReadStatus(res.data.inReadList);
         setWishlistStatus(res.data.inWishlist);
       } catch (err) {
@@ -51,19 +45,15 @@ const BookDetails = () => {
     };
 
     checkBookStatus();
-  }, [id, token]);
+  }, [id]);
 
   // Add to read list
   const addToReadList = async () => {
     setError(null);
     try {
-      await axios.post('http://localhost:5000/api/user/books/read', { bookId: id }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await apiClient.post('/api/user/books/read', { bookId: id });
       setReadStatus(true);
-      axios.post(`http://localhost:5000/api/popular-books/read/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).catch(e => console.log('Popular books update failed:', e.message));
+      apiClient.post(`/api/popular-books/read/${id}`, {}).catch(e => console.log('Popular books update failed:', e.message));
     } catch (err) {
       if (err.response && err.response.status !== 409) {
         setError(err.response?.data?.message || 'Error adding to read list');
@@ -76,35 +66,26 @@ const BookDetails = () => {
     setError(null);
     try {
       // Decrease the read count for this book in the popular books collection
-      await axios.post(`http://localhost:5000/api/popular-books/remove-read/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).catch(e => {
+      await apiClient.post(`/api/popular-books/remove-read/${id}`, {}).catch(e => {
         console.log('Error removing from read list:', e.message);
         setError('Failed to update the read list.'); // Show user-friendly message
       });
 
       // Remove the book from the user's read list
-      await axios.delete(`http://localhost:5000/api/user/books/read/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await apiClient.delete(`/api/user/books/read/${id}`);
       setReadStatus(false); // Update the state to reflect that it's no longer in the read list
     } catch (err) {
       setError('Error removing from read list');
     }
-};
-
+  };
 
   // Add to wishlist
   const addToWishlist = async () => {
     setError(null);
     try {
-      await axios.post('http://localhost:5000/api/user/books/wishlist', { bookId: id }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await apiClient.post('/api/user/books/wishlist', { bookId: id });
       setWishlistStatus(true);
-      axios.post(`http://localhost:5000/api/popular-books/wishlist/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).catch(e => console.log('Popular books update failed:', e.message));
+      apiClient.post(`/api/popular-books/wishlist/${id}`, {}).catch(e => console.log('Popular books update failed:', e.message));
     } catch (err) {
       if (err.response && err.response.status !== 409) {
         setError(err.response?.data?.message || 'Error adding to wishlist');
@@ -115,22 +96,17 @@ const BookDetails = () => {
   const removeFromWishlist = async () => {
     setError(null);
     try {
-      await axios.post(`http://localhost:5000/api/popular-books/remove-wishlist/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      }).catch(e => {
+      await apiClient.post(`/api/popular-books/remove-wishlist/${id}`, {}).catch(e => {
         console.log('Error removing from wishlist:', e.message);
         setError('Failed to update the wishlist.'); // Show user-friendly message
       });
   
-      await axios.delete(`http://localhost:5000/api/user/books/wishlist/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await apiClient.delete(`/api/user/books/wishlist/${id}`);
       setWishlistStatus(false);
     } catch (err) {
       setError('Error removing from wishlist');
     }
   };
-  
 
   // Submit rating and review
   const submitReview = async () => {
@@ -143,11 +119,9 @@ const BookDetails = () => {
       return;
     }
     try {
-      await axios.post(`http://localhost:5000/api/books/review/${id}`, {
+      await apiClient.post(`/api/books/review/${id}`, {
         rating,
         reviewText
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
       setError(null);
       setReviewSuccess(true);
@@ -155,9 +129,7 @@ const BookDetails = () => {
       setReviewText("");
 
       // Reload book details
-      const res = await axios.get(`http://localhost:5000/api/books/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiClient.get(`/api/books/${id}`);
       setBook(res.data);
     } catch (err) {
       setError('Error submitting review');

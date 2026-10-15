@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import './UserProfile.css';
 
 const UserProfile = () => {
@@ -15,12 +15,7 @@ const UserProfile = () => {
   useEffect(() => {
     const getUserProfile = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/profile', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiClient.get('/api/profile');
         setUser(response.data);
         setSelectedGenres(response.data.interests || []); // Set current genres
       } catch (error) {
@@ -63,10 +58,8 @@ const UserProfile = () => {
     formData.append('image', imageFile);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/profile/upload', formData, {
+      const response = await apiClient.post('/api/profile/upload', formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -85,14 +78,9 @@ const UserProfile = () => {
 
   const handleUpdateGenres = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/user/update-interests', {
+      await apiClient.post('/api/user/update-interests', {
         userId: user._id,
         interests: selectedGenres,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
       setError(null);
       setShowGenresModal(false); // Close modal after update

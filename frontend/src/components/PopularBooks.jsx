@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for programmatic navigation
-import axios from 'axios';
+import apiClient from '../apiClient';
 
 const PopularBooks = () => {
   const [books, setBooks] = useState([]);
@@ -13,7 +13,7 @@ const PopularBooks = () => {
   useEffect(() => {
     const fetchPopularBooks = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/popular-books');  // API to get popular books
+        const response = await apiClient.get('/api/popular-books');  // API to get popular books
         setBooks(response.data);
       } catch (err) {
         setError('Failed to fetch popular books');

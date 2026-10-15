@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import { useNavigate } from 'react-router-dom';
 import './AuthForm.css';
 
@@ -62,7 +62,7 @@ function AuthForm() {
   const endpoint = isSignIn ? '/api/auth/login' : '/api/auth/signup';
 
   try {
-    const res = await axios.post(`http://localhost:5000${endpoint}`, formData);
+    const res = await apiClient.post(endpoint, formData);
 
     setMessage(res.data.message);
     localStorage.setItem("token", res.data.token);

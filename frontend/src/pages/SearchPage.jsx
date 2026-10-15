@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useTransition } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import SearchBar from '../components/SearchBar';
 import SearchResults from '../components/SearchResults';
 import './SearchPage.css';
@@ -38,9 +38,7 @@ const SearchPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No authentication token found');
 
-      const res = await axios.get(`/api/books/search?q=${encodeURIComponent(query)}`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
+      const res = await apiClient.get(`/api/books/search?q=${encodeURIComponent(query)}`);
 
       setSearchResults(res.data.results || { books: [], authors: [] });
     } catch (err) {

@@ -168,6 +168,85 @@ body {
   filter: grayscale(0%) contrast(120%);
 }
 
+/* Author specific styling overrides for perfect vertical alignment */
+.author.author-card {
+  height: 420px;
+  padding: 12px;
+  justify-content: flex-start;
+}
+
+.author-image-wrapper {
+  width: 100%;
+  height: 230px;
+  overflow: hidden;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.author-image-wrapper img.author-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  filter: grayscale(15%) contrast(110%);
+}
+
+.author.author-card:hover .author-image-wrapper img.author-image {
+  transform: scale(1.04);
+  filter: grayscale(0%) contrast(120%);
+}
+
+.author-card-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.author-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.35;
+  min-height: 2.7em;
+  max-height: 2.7em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  margin: 0 !important;
+}
+
+.author-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.author-meta-item {
+  margin: 0 !important;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.author-top-work {
+  color: var(--neon-cyan);
+  font-size: 0.8rem;
+}
+
 /* Cyberpunk Arrows - Fixed Positioning */
 .arrow-button {
   position: absolute;

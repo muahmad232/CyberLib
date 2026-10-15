@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useRef } from 'react';
+import apiClient from '../apiClient';
 import ChatHistory from '../components/ChatHistory';  // Import ChatHistory
 import './Chatbot.css';
 
@@ -13,6 +13,7 @@ const Chatbot = () => {
   ]);
   const [userInput, setUserInput] = useState('');
   const [chatId, setChatId] = useState(null);
+  const chatIdRef = useRef(null);
 
 
   const genres = [
@@ -82,10 +83,7 @@ const Chatbot = () => {
   // Function to fetch messages for a specific chat
   const fetchChatMessages = async (chatId) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get(`http://localhost:5000/api/chat/${chatId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiClient.get(`/api/chat/${chatId}`);
       
       if (res.data && res.data.messages) {
         setMessages(res.data.messages.map(msg => ({
@@ -101,36 +99,21 @@ const Chatbot = () => {
 
   // Function to load a specific chat
   const loadChat = (selectedChatId) => {
+    chatIdRef.current = selectedChatId;
     setChatId(selectedChatId);
   };
 
   const saveMessageToBackend = async (sender, text) => {
     try {
-      const token = localStorage.getItem('token');
-      
-      // Debugging: Log chatId and the message being sent
-      console.log('Saving message to backend...');
-      console.log('Sender:', sender);
-      console.log('Text:', text);
-      console.log('Current chatId:', chatId); // Log the chatId here
-  
-      const res = await axios.post(
-        'http://localhost:5000/api/chat',
-        { sender, text, chatId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      const res = await apiClient.post(
+        '/api/chat',
+        { sender, text, chatId: chatIdRef.current }
       );
   
-      // Debugging: Log the response from the backend
-      console.log('Response from backend:', res.data);
-  
-      // If no chatId exists (i.e., the first message), store the new session ID
-      if (!chatId && res.data._id) {
-        console.log('New chat session created. Storing chatId:', res.data._id);
-        setChatId(res.data._id); // Store the new session ID
+      // If no chatId existed, store the newly created session ID immediately in ref and state
+      if (!chatIdRef.current && res.data._id) {
+        chatIdRef.current = res.data._id;
+        setChatId(res.data._id);
       }
     } catch (err) {
       console.error('Error saving message:', err.response?.data || err.message);
@@ -138,10 +121,6 @@ const Chatbot = () => {
   };
   
   const sendMessage = async (message) => {
-    // Debugging: Log the user's message and chatId before sending
-    console.log('User message received:', message);
-    console.log('Current chatId before sending user message:', chatId); // Log the chatId here
-  
     const userMessage = { 
       sender: 'user', 
       text: message,
@@ -151,8 +130,7 @@ const Chatbot = () => {
     setMessages(prev => [...prev, userMessage]);
     setUserInput('');
   
-    console.log('Saving user message to backend...');
-    await saveMessageToBackend('user', message); // Save user message to backend
+    await saveMessageToBackend('user', message);
   
     const query = message.toLowerCase();
     let response;
@@ -163,8 +141,6 @@ const Chatbot = () => {
     const isSimilarBooksRequest = query.includes('similar') || query.includes('like') || query.includes('related') || query.includes('closest');
     const isGeneralBookRequest = (query.includes('recommend') && query.includes('book')) || (query.includes('suggest') && query.includes('book')) || (query.includes('popular') && query.includes('book'));
     const isGeneralAuthorRequest = (query.includes('recommend') && query.includes('author')) || (query.includes('suggest') && query.includes('author')) || (query.includes('popular') && query.includes('author'));
-  
-    console.log('Processing user query:', query);
   
     if (isSimilarBooksRequest) {
       const bookTitle = getBookTitleFromQuery(query);
@@ -195,8 +171,6 @@ const Chatbot = () => {
       }
     }
   
-    console.log('Bot response:', response);
-  
     const botMessage = {
       sender: 'bot',
       text: response,
@@ -204,11 +178,7 @@ const Chatbot = () => {
     };
   
     setMessages(prev => [...prev, botMessage]);
-  
-    // Debugging: Log chatId before sending bot's reply
-    console.log('Saving bot message to backend...');
-    console.log('Current chatId before saving bot message:', chatId); // Log the chatId here
-    await saveMessageToBackend('bot', response); // Save bot message to backend
+    await saveMessageToBackend('bot', response);
   };
   
   const findAuthorInQuery = (query) => {
@@ -243,7 +213,7 @@ const Chatbot = () => {
     ];
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/chatbot/recommendations?genre=${genre}`);
+      const res = await apiClient.get(`/api/chatbot/recommendations?genre=${genre}`);
       const books = res.data || [];
       if (!books.length) return `🌑 *The ${genre} shelf lies empty...*`;
 
@@ -262,7 +232,7 @@ const Chatbot = () => {
     ];
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/chatbot/author?author=${encodeURIComponent(author)}`);
+      const res = await apiClient.get(`/api/chatbot/author?author=${encodeURIComponent(author)}`);
       const books = res.data || [];
       if (!books.length) return `🌫️ *The echoes of ${author} fade...*`;
 
@@ -281,7 +251,7 @@ const Chatbot = () => {
     ];
 
     try {
-      const res = await axios.get(`http://localhost:5000/api/chatbot/similar-books?title=${encodeURIComponent(bookTitle)}`);
+      const res = await apiClient.get(`/api/chatbot/similar-books?title=${encodeURIComponent(bookTitle)}`);
       const books = res.data || [];
       if (!books.length) return `🌑 *I couldn't find any similar books to ${bookTitle}...*`;
 
@@ -295,7 +265,7 @@ const Chatbot = () => {
 
   const fetchPopularBooks = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/popular-books');
+      const res = await apiClient.get('/api/popular-books');
       const books = res.data || [];
       if (!books.length) return `📚 *The shelves of renown are momentarily bare...*`;
 
@@ -308,7 +278,7 @@ const Chatbot = () => {
 
   const fetchPopularAuthors = async () => {
   try {
-    const res = await axios.get('http://localhost:5000/api/popular-authors');
+    const res = await apiClient.get('/api/popular-authors');
     const authors = res.data?.data || [];
     
     if (!authors.length) {
@@ -328,6 +298,7 @@ const Chatbot = () => {
 
   // Function to start a new chat
   const startNewChat = () => {
+    chatIdRef.current = null;
     setChatId(null);
     setMessages([{ 
       sender: 'bot', 

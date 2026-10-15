@@ -1,29 +1,55 @@
 const User = require('../models/user');
 const multer = require('multer');
 const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Set up multer storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');  // Specify the folder to save the images
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));  // Create a unique file name
-  }
-});
+// Check if Cloudinary credentials are provided in environment
+const hasCloudinary = Boolean(
+  process.env.CLOUDINARY_CLOUD_NAME &&
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET
+);
+
+if (hasCloudinary) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+}
+
+// Use Cloudinary if configured; otherwise fallback to local disk storage
+const storage = hasCloudinary
+  ? new CloudinaryStorage({
+      cloudinary: cloudinary,
+      params: {
+        folder: 'cyberlib_profiles',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        transformation: [{ width: 500, height: 500, crop: 'limit' }],
+      },
+    })
+  : multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, 'uploads/');  // Specify the folder to save the images
+      },
+      filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));  // Create a unique file name
+      }
+    });
 
 const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // Max file size 5MB
   fileFilter: (req, file, cb) => {
-    const fileTypes = /jpeg|jpg|png|gif/;
+    const fileTypes = /jpeg|jpg|png|gif|webp/;
     const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = fileTypes.test(file.mimetype);
 
     if (mimetype && extname) {
       return cb(null, true);
     } else {
-      cb(new Error('Invalid file type. Only JPEG, PNG, and GIF are allowed.'));
+      cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.'));
     }
   }
 }).single('image'); // 'image' is the field name in the form
@@ -61,12 +87,18 @@ exports.updateUserProfileImage = async (req, res) => {
       return res.status(400).json({ message: err.message });
     }
 
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file uploaded' });
+    }
+
     try {
       const user = await User.findById(req.user._id);
       if (!user) return res.status(404).json({ message: 'User not found' });
 
-      // Update the image field with the new image path
-      user.image = `/uploads/${req.file.filename}`;  // You can also use cloud storage if necessary
+      // Save Cloudinary HTTPS URL or local uploads path
+      user.image = (req.file.path && req.file.path.startsWith('http'))
+        ? req.file.path
+        : `/uploads/${req.file.filename}`;
 
       await user.save();
 

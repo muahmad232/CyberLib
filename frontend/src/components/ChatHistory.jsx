@@ -1,22 +1,18 @@
 //ChatHistory.jsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../apiClient';
 import './ChatHistory.css'; // Use the same theme
 
-const ChatHistory = () => {
+const ChatHistory = ({ onSelectChat, currentChatId }) => {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeChat, setActiveChat] = useState(null); // To store the loaded chat's messages
 
-  // Fetch chat history when component mounts
+  // Fetch chat history when component mounts or active chat changes
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/chat', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await apiClient.get('/api/chat');
         setChats(res.data || []);
       } catch (err) {
         console.error('Failed to load chat history:', err);
@@ -27,11 +23,13 @@ const ChatHistory = () => {
     };
 
     fetchChatHistory();
-  }, []);
+  }, [currentChatId]);
 
   // Handle loading a specific chat session
   const loadChat = (chat) => {
-    setActiveChat(chat.messages); // Set active chat messages to display
+    if (onSelectChat) {
+      onSelectChat(chat._id);
+    }
   };
 
   if (loading) return <p>Loading chat history...</p>;
@@ -40,36 +38,27 @@ const ChatHistory = () => {
 
   return (
     <div className="chat-history">
-      
+      <h2>📜 Past Conversations</h2>
+      <ul>
+        {chats.map((chat) => {
+          const lastUserMsg = chat.messages?.filter(m => m.sender === 'user').slice(-1)[0];
+          const rawSnippet = lastUserMsg?.text || chat.messages?.[0]?.text || 'New conversation';
+          const cleanSnippet = rawSnippet.replace(/[*_#`~]/g, '').trim();
 
-      {/* Display selected chat below history */}
-      {activeChat && (
-        <div className="active-chat">
-          <h3>Selected Conversation:</h3>
-          {activeChat.map((msg, idx) => (
-            <div key={idx} className={`message ${msg.sender}-message`}>
-              <p>
-                <strong>{msg.sender === 'bot' ? 'KEEPER OF TALES:' : 'YOU:'}</strong>
-                <span>{msg.text}</span>
+          return (
+            <li 
+              key={chat._id} 
+              className={chat._id === currentChatId ? 'active-chat-item' : ''}
+              onClick={() => loadChat(chat)}
+            >
+              <p><strong>{new Date(chat.createdAt).toLocaleString()}</strong></p>
+              <p className="snippet">
+                {cleanSnippet.length > 55 ? `${cleanSnippet.slice(0, 55)}...` : cleanSnippet}
               </p>
-            </div>
-          ))}
-        </div>
-      )}
-
-
-        <h2>📜 Past Conversations</h2>
-        <ul>
-        {chats.map((chat) => (
-          <li key={chat._   } onClick={() => loadChat(chat)}>
-            <p><strong>{new Date(chat.createdAt).toLocaleString()}</strong></p>
-            <p className="snippet">
-              {chat.messages[0]?.text.slice(0, 60)}...
-            </p>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
-
     </div>
   );
 };
